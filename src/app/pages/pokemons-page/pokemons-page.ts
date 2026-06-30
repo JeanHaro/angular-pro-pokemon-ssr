@@ -4,6 +4,9 @@ import { ApplicationRef, Component, inject, OnDestroy, OnInit, signal } from '@a
 import { PokemonList } from "../../pokemons/components/pokemon-list/pokemon-list";
 import { PokemonListSkeleton } from "./ui/pokemon-list-skeleton/pokemon-list-skeleton";
 
+// Servicios
+import { PokemonsService } from '../../pokemons/services/pokemons';
+
 @Component({
   selector: 'pokemons-page',
   imports: [
@@ -15,8 +18,9 @@ import { PokemonListSkeleton } from "./ui/pokemon-list-skeleton/pokemon-list-ske
 })
 export default class PokemonsPage implements OnInit {
   public isLoading = signal(true);
+  private pokemonsService = inject(PokemonsService);
 
- /*  private appRef = inject(ApplicationRef);
+  /*  private appRef = inject(ApplicationRef);
 
   // Estado actual, el $ es para indicar que es un observable
   private $appState = this.appRef.isStable.subscribe( isStable => {
@@ -24,6 +28,8 @@ export default class PokemonsPage implements OnInit {
   }); */
 
   ngOnInit(): void {
+    this.loadPokemons();
+
     setTimeout(() => {
       this.isLoading.set(false);
     }, 5000);
@@ -34,4 +40,12 @@ export default class PokemonsPage implements OnInit {
     console.log('destroy');
     this.$appState.unsubscribe();
   } */
+
+  public loadPokemons ( page = 0 ) {
+    this.pokemonsService.loadPage(page).subscribe({
+      next: ( pokemons ) => {
+        console.log('On init');
+      }
+    })
+  }
 }
