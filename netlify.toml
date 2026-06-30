@@ -4,3 +4,15 @@
 
 [[plugins]]
   package = "@netlify/angular-runtime"
+
+[build]
+  command = "pnpm run build"
+  publish = "dist/pokemon--ssr/browser"
+
+[[plugins]]
+  package = "@netlify/angular-runtime"
+
+[[redirects]]
+  from = "/"
+  to = "/about"
+  status = 302
