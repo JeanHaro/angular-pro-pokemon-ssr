@@ -6,6 +6,7 @@ import { PokemonListSkeleton } from "./ui/pokemon-list-skeleton/pokemon-list-ske
 
 // Servicios
 import { PokemonsService } from '../../pokemons/services/pokemons';
+import { SimplePokemon } from '../../pokemons/interfaces/simple-pokemon.interface';
 
 @Component({
   selector: 'pokemons-page',
@@ -17,8 +18,9 @@ import { PokemonsService } from '../../pokemons/services/pokemons';
   styles: ``,
 })
 export default class PokemonsPage implements OnInit {
-  public isLoading = signal(true);
+  // public isLoading = signal(true);
   private pokemonsService = inject(PokemonsService);
+  public pokemons = signal<SimplePokemon[]>([]);
 
   /*  private appRef = inject(ApplicationRef);
 
@@ -30,9 +32,9 @@ export default class PokemonsPage implements OnInit {
   ngOnInit(): void {
     this.loadPokemons();
 
-    setTimeout(() => {
+    /* setTimeout(() => {
       this.isLoading.set(false);
-    }, 5000);
+    }, 5000); */
   }
 
   // Cuando tengamos un observable que estamos suscrito es bueno que usemos ngOnDestroy para destruir esa suscripcion
@@ -44,7 +46,7 @@ export default class PokemonsPage implements OnInit {
   public loadPokemons ( page = 0 ) {
     this.pokemonsService.loadPage(page).subscribe({
       next: ( pokemons ) => {
-        console.log('On init');
+        this.pokemons.set(pokemons);
       }
     })
   }
