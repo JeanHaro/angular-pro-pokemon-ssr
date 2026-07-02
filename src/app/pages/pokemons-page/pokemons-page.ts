@@ -1,4 +1,7 @@
 import { ApplicationRef, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 // Componentes
 import { PokemonList } from "../../pokemons/components/pokemon-list/pokemon-list";
@@ -7,6 +10,8 @@ import { PokemonListSkeleton } from "./ui/pokemon-list-skeleton/pokemon-list-ske
 // Servicios
 import { PokemonsService } from '../../pokemons/services/pokemons';
 import { SimplePokemon } from '../../pokemons/interfaces/simple-pokemon.interface';
+
+
 
 @Component({
   selector: 'pokemons-page',
@@ -22,6 +27,18 @@ export default class PokemonsPage implements OnInit {
   private pokemonsService = inject(PokemonsService);
   public pokemons = signal<SimplePokemon[]>([]);
 
+  private route = inject(ActivatedRoute);
+
+  public currentPage = toSignal<number>(
+    this.route.queryParamMap.pipe(
+      map( params => params.get('page') ?? '1' ),
+      map( page => ( isNaN(+page) ? 1 : +page ) ),
+      map( page => Math.max(1, page))
+    )
+  );
+
+
+
   /*  private appRef = inject(ApplicationRef);
 
   // Estado actual, el $ es para indicar que es un observable
@@ -30,6 +47,8 @@ export default class PokemonsPage implements OnInit {
   }); */
 
   ngOnInit(): void {
+    console.log(this.currentPage());
+
     this.loadPokemons();
 
     /* setTimeout(() => {
@@ -44,7 +63,9 @@ export default class PokemonsPage implements OnInit {
   } */
 
   public loadPokemons ( page = 0 ) {
-    this.pokemonsService.loadPage(page).subscribe({
+    const pageToLoad = this.currentPage()! + page;
+
+    this.pokemonsService.loadPage(pageToLoad).subscribe({
       next: ( pokemons ) => {
         this.pokemons.set(pokemons);
       }
