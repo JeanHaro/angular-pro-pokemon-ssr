@@ -8,12 +8,12 @@
 
 <!-- TODO: pokemon-list -->
 <!-- Si no estamos cargando -->
-<!-- @if ( !isLoading() ) {
-  <pokemon-list />
+@if ( pokemons() ) {
+  <pokemon-list [pokemons]="pokemons()" />
 } @else {
   <pokemon-list-skeleton />
-} -->
-<pokemon-list [pokemons]="pokemons()" />
+}
+
 
 <!-- TODO: pokemon-list-skeleton -->
 
