@@ -1,3 +1,4 @@
+// Como era en la v19 o 20 quizas tambien
 const TOTAL_POKEMONS = 151;
 const TOTAL_PAGES = 5;
 
