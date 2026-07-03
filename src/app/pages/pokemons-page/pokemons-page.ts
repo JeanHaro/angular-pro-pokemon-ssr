@@ -1,5 +1,5 @@
-import { ApplicationRef, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {  Component, effect, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, tap } from 'rxjs';
 
@@ -18,12 +18,13 @@ import { Title } from '@angular/platform-browser';
   selector: 'pokemons-page',
   imports: [
     PokemonList,
-    PokemonListSkeleton
+    PokemonListSkeleton,
+    RouterLink
 ],
   templateUrl: './pokemons-page.html',
   styles: ``,
 })
-export default class PokemonsPage implements OnInit {
+export default class PokemonsPage {
   // public isLoading = signal(true);
   private pokemonsService = inject(PokemonsService);
   public pokemons = signal<SimplePokemon[]>([]);
@@ -33,14 +34,18 @@ export default class PokemonsPage implements OnInit {
   private title = inject(Title);
 
   public currentPage = toSignal<number>(
-    this.route.queryParamMap.pipe(
-      map( params => params.get('page') ?? '1' ),
+    this.route.params.pipe(
+      map( params => params['page'] ?? '1' ),
       map( page => ( isNaN(+page) ? 1 : +page ) ),
       map( page => Math.max(1, page))
     )
   );
 
-
+  public loadOnPageChange = effect(() => {
+    this.loadPokemons(this.currentPage());
+  }, {
+    allowSignalWrites: true // Permitir esa escritura en esa señal en este efecto
+  });
 
   /*  private appRef = inject(ApplicationRef);
 
@@ -49,15 +54,15 @@ export default class PokemonsPage implements OnInit {
     console.log({ isStable });
   }); */
 
-  ngOnInit(): void {
-    console.log(this.currentPage());
+  /** ngOnInit(): void {
+    // console.log(this.currentPage());
 
-    this.loadPokemons();
+    // this.loadPokemons();
 
-    /* setTimeout(() => {
-      this.isLoading.set(false);
-    }, 5000); */
-  }
+    // setTimeout(() => {
+    //   this.isLoading.set(false);
+    // }, 5000);
+  } */
 
   // Cuando tengamos un observable que estamos suscrito es bueno que usemos ngOnDestroy para destruir esa suscripcion
   /* ngOnDestroy(): void {
@@ -70,7 +75,7 @@ export default class PokemonsPage implements OnInit {
 
     this.pokemonsService.loadPage(pageToLoad)
     .pipe(
-      tap( () => this.router.navigate([], { queryParams: { page: pageToLoad } }) ),
+      /* tap( () => this.router.navigate([], { queryParams: { page: pageToLoad } }) ), */
       tap( () => this.title.setTitle(`Pokemons SSR - Page ${pageToLoad}`))
     )
     .subscribe({
