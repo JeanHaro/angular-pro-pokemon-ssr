@@ -30,7 +30,9 @@
             "security": {
               "allowedHosts": ["localhost"]
             },
-            "prerender": true,
+            "prerender": {
+              "routesFile": "routes.txt"
+            },
             "ssr": {
               "entry": "src/server.ts"
             }
