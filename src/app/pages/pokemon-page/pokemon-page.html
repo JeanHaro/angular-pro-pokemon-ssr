@@ -22,7 +22,7 @@
 
     <!-- Si no es nulo el audio -->
     @if ( myPokemon.cries.latest !== null ) {
-      <audio controls autoplay class="my-10">
+      <audio controls class="my-10">
         <source [src]="myPokemon.cries.latest" type="audio/wav">
       </audio>
     }
