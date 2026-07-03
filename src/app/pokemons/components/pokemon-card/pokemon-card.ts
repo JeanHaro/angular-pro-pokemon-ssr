@@ -2,10 +2,11 @@ import { Component, computed, effect, input } from '@angular/core';
 
 // Interfaces
 import { SimplePokemon } from '../../interfaces/simple-pokemon.interface';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'pokemon-card',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './pokemon-card.html',
   styles: ``,
 })

@@ -6,6 +6,7 @@ import { map, Observable, tap } from 'rxjs';
 // Interfaces
 import { SimplePokemon } from '../interfaces/simple-pokemon.interface';
 import { PokeAPIResponse } from '../interfaces/pokemon-api.response';
+import { Pokemon } from '../interfaces/pokemon.interface';
 
 @Service()
 export class PokemonsService {
@@ -33,5 +34,9 @@ export class PokemonsService {
       }),
       tap( pokemons => console.log({pokemons}) )
     );
+  }
+
+  public loadPokemon ( id: string ) {
+    return this.http.get<Pokemon>(`https://pokeapi.co/api/v2/pokemon/${id}`);
   }
 }
