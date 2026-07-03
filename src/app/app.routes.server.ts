@@ -3,6 +3,10 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 const TOTAL_POKEMONS = 151;
 const TOTAL_PAGES = 5;
 
+interface PokeApiListResponse {
+  results: { name: string }[];
+}
+
 export const serverRoutes: ServerRoute[] = [
   {
     path: 'pokemons/page/:page',
@@ -15,7 +19,11 @@ export const serverRoutes: ServerRoute[] = [
     path: 'pokemons/:id',
     renderMode: RenderMode.Prerender,
     async getPrerenderParams() {
-      return Array.from({ length: TOTAL_POKEMONS }, (_, i) => ({ id: `${i + 1}` }));
+      const response = await fetch(
+        `https://pokeapi.co/api/v2/pokemon?limit=${TOTAL_POKEMONS}`
+      );
+      const data: PokeApiListResponse = await response.json();
+      return data.results.map((pokemon) => ({ id: pokemon.name }));
     },
   },
   {
