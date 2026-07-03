@@ -30,6 +30,7 @@
             "security": {
               "allowedHosts": ["localhost"]
             },
+            "prerender": true,
             "ssr": {
               "entry": "src/server.ts"
             }
