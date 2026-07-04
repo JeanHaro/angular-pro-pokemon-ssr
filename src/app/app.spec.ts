@@ -50,4 +50,11 @@ describe('App', () => {
     expect(compiled.querySelector('app-navbar')).toBeTruthy();
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
+
+  // Fotografiar el html
+  it('should match snapshot', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.innerHTML).toMatchSnapshot();
+  });
 });
