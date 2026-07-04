@@ -5,6 +5,8 @@ import { TestBed } from '@angular/core/testing';
 
 // Componente
 import AboutPage from './pages/about-page/about-page';
+import PricingPage from './pages/pricing-page/pricing-page';
+import PokemonsPage from './pages/pokemons-page/pokemons-page';
 
 describe('App Routes', () => {
   let router: Router;
@@ -48,18 +50,42 @@ describe('App Routes', () => {
   });
 
   it('should render PricingPageComponent when path is /pricing', async () => {
-    // todo:
+    const pricingRoute = routes.find( (route) => route.path === 'pricing' )!;
+
+    // Verificamos que exista la ruta del pricing
+    expect(pricingRoute).toBeDefined();
+
+    // Cargamos el componente
+    const component = (await pricingRoute.loadComponent!()) as any;
+
+    // Verificamos que el componente que renderizo es el pricing
+    expect(component.default).toBe(PricingPage);
   });
 
+  // Verificamos que navegamos a esa ruta
   it('should navigate to "/pokemons/page/1" and render PokemonsPageComponent', async () => {
-    // todo:
+    await router.navigate(['/pokemons/page/1']);
+
+    expect(location.path()).toBe('/pokemons/page/1');
   });
 
   it('should render PokemonsPageComponent when path is /pokemons/page/:page', async () => {
-    // todo:
+    const route = routes.find( (route) => route.path === 'pokemons/page/:page' )!;
+
+    // Verificamos que exista la ruta del pokemons/page/:page
+    expect(route).toBeDefined();
+
+    // Cargamos el componente
+    const component = (await route.loadComponent!()) as any;
+
+    // Verificamos que el componente que renderizo pokemons/page/:page
+    expect(component.default).toBe(PokemonsPage);
   });
 
+  // Verificamos que cuando no es conocido la ruta manda al about
   it('should redirect to /about when path is unknown', async () => {
-    // todo:
+    await router.navigate(['/asdasdasd']);
+
+    expect(location.path()).toBe('/about');
   });
 });
