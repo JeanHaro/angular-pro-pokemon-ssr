@@ -96,7 +96,7 @@ describe('PokemonsService', () => {
     );
 
     expect(req.request.method).toBe('GET'); // Debe ser un GET
-    req.flush(mockPokemon); // Debe ser nuestro mockPokemon1
+    req.flush(mockPokemon); // Debe ser nuestro mockPokemon
   });
 
   // Verificar que el pokemon carga por un name
@@ -115,7 +115,27 @@ describe('PokemonsService', () => {
     req.flush(mockPokemon); // Debe ser nuestro mockPokemon
   });
 
+  // Verificar que los errores funcionan
   it('should catch error if API fails', () => {
-    // todo:
+    const pokemonName = 'bulbasaur';
+
+    service.loadPokemon(pokemonName).subscribe({
+      next: () => {
+        throw new Error('Should have failed with 404 error'); // Esto nunca debe de suceder
+      },
+      error: (error) => {
+        expect(error.status).toBe(404);
+        expect(error.statusText).toBe('Not found - Pokemon not found');
+      }
+    });
+
+    const req = httpMock.expectOne(
+      `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+    );
+
+    req.flush('404 error', {
+      status: 404,
+      statusText: 'Not found - Pokemon not found'
+    }); // Debe dar un error
   });
 });
