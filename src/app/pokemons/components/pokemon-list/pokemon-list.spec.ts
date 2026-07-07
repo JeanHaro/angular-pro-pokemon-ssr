@@ -20,24 +20,25 @@ describe('PokemonList', () => {
     TestBed.configureTestingModule({
       imports: [PokemonList],
       providers: [provideRouter([])]
-    });
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PokemonList);
     component = fixture.componentInstance;
-
-    // Le damos valor al input
-    fixture.componentRef.setInput('pokemon', mockPokemons);
-
-    // detectamos cambios
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    // Le asignamos el valor inicial antes del primer ciclo de vida
+    fixture.componentRef.setInput('pokemons', mockPokemons);
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 
   // Verificamos que reciba la lista
   it('should render the pokemon list', () => {
+    fixture.componentRef.setInput('pokemons', mockPokemons);
+    fixture.detectChanges();
+
     const compiled = fixture.nativeElement as HTMLElement;
     const pokemonCards = compiled.querySelectorAll('pokemon-card');
 

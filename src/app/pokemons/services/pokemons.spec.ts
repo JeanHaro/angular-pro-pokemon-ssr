@@ -4,6 +4,36 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 // Servicio
 import { PokemonsService } from "./pokemons";
 
+// Interfaces
+import { SimplePokemon } from "../interfaces/simple-pokemon.interface";
+import { PokeAPIResponse } from "../interfaces/pokemon-api.response";
+
+const mockPokeApiResponse: PokeAPIResponse = {
+  count: 1302,
+  next: 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20',
+  previous: null,
+  results: [
+    {
+      name: 'bulbasaur',
+      url: 'https://pokeapi.co/api/v2/pokemon/1/',
+    },
+    {
+      name: 'ivysaur',
+      url: 'https://pokeapi.co/api/v2/pokemon/2/',
+    },
+  ],
+};
+
+const expectedPokemons: SimplePokemon[] = [
+  { id: '1', name: 'bulbasaur' },
+  { id: '2', name: 'ivysaur' },
+];
+
+const mockPokemon = {
+  id: 1,
+  name: 'bulbasaur',
+} as any;
+
 describe('PokemonsService', () => {
   let service: PokemonsService;
   let httpMock: HttpTestingController;
@@ -24,20 +54,65 @@ describe('PokemonsService', () => {
     expect(service).toBeTruthy();
   });
 
+  // Debe cargar una pagina de pokemones
   it('should load a page of pokemons', () => {
-    // todo:
+    service.loadPage(1).subscribe( pokemons => {
+      expect(pokemons).toEqual(expectedPokemons); // Verificamos que recibimos los pokemons del expectedPokemons
+    });
+
+    const req = httpMock.expectOne(
+      `https://pokeapi.co/api/v2/pokemon?offset=0&limit=20`
+    );
+
+    expect(req.request.method).toBe('GET'); // Verificamos que tiene que ser un get
+    req.flush(mockPokeApiResponse); // que información queremos meter en esa request que es el mockPokeApiResponse
+
   });
 
+  // Verificamos que cargamos los pokemones de la pagina 5
   it('should load page 5 of pokemons', () => {
-    // todo:
+    service.loadPage(5).subscribe( pokemons => {
+      expect(pokemons).toEqual(expectedPokemons); // Verificamos que recibimos los pokemons del expectedPokemons
+    });
+
+    const req = httpMock.expectOne(
+      `https://pokeapi.co/api/v2/pokemon?offset=80&limit=20`
+    );
+
+    expect(req.request.method).toBe('GET');
+    req.flush(mockPokeApiResponse);
   });
 
+  // Verificar que el pokemon carga por un id
   it('should load a pokemon by ID', () => {
-    // todo:
+    const pokemonId = '1';
+
+    service.loadPokemon(pokemonId).subscribe((pokemon) => {
+      expect(pokemon).toEqual(mockPokemon);
+    });
+
+    const req = httpMock.expectOne(
+      `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
+    );
+
+    expect(req.request.method).toBe('GET'); // Debe ser un GET
+    req.flush(mockPokemon); // Debe ser nuestro mockPokemon1
   });
 
+  // Verificar que el pokemon carga por un name
   it('should load a pokemon by Name', () => {
-    // todo:
+    const pokemonName = 'bulbasaur';
+
+    service.loadPokemon(pokemonName).subscribe((pokemon) => {
+      expect(pokemon).toEqual(mockPokemon);
+    });
+
+    const req = httpMock.expectOne(
+      `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+    );
+
+    expect(req.request.method).toBe('GET'); // Debe ser un GET
+    req.flush(mockPokemon); // Debe ser nuestro mockPokemon
   });
 
   it('should catch error if API fails', () => {
